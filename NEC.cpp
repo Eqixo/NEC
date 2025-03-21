@@ -227,12 +227,13 @@ int32_t AcquerirFrontDescendantNEC(int Broche)                           // Acqu
 
 uint8_t AcquerirInfrarouge(int Broche)
 {
+  uint8_t val = 0;
   if (Broche >= 0 && Broche <= 7) {
-    return (PIND & (1 << Broche)) ? 0 : 1;
+    val = PIND & (1 << Broche) ? 0 : 1;
   } else if (Broche >= 8 && Broche <= 13) {
-    return (PINB & (1 << (Broche - 8))) ? 0 : 1;
+    val = PINB & (1 << (Broche - 8)) ? 0 : 1;
   } else if (Broche >= A0 && Broche <= A5) {
-    return (PINC & (1 << (Broche - A0))) ? 0 : 1;
+    val = PINC & (1 << (Broche - A0)) ? 0 : 1;
   }
-  return 0;
+  return val;
 }
