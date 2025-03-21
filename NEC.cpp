@@ -28,34 +28,29 @@
 #include "NEC.h"
 
 // definition des fonctions d'emission de la bibliotheque NEC
-void GenererTrameNEC(int Broche, uint8_t Adresse, uint8_t Donnee)   // GenererTrameNEC : fonction d'action
-{
+void GenererTrameNEC(int Broche, uint8_t Adresse, uint8_t Donnee) {  // GenererTrameNEC : fonction d'action
   GenererEnteteNEC(Broche);               // generation du header NEC
   GenererOctetNEC(Broche, Adresse);       // generation de l'adresse NEC
   GenererOctetNEC(Broche, ~Adresse);      // generation de l'adresse_barre NEC
   GenererOctetNEC(Broche, Donnee);        // generation de la donnee NEC
   GenererOctetNEC(Broche, ~Donnee);       // generation de la donnee_barre NEC
   GenererBurst562usNEC(Broche);           // burst final d'une trame NEC
-  delayMicroseconds(40500);               // delai inter-trame de 40,5ms
+  delayMicroseconds(40500);               // delai inter-trame de 40,5ms <-- à modifier en fonction de la valeur à l'oscilloscope
 }
 
-void GenererEnteteNEC(int Broche)                                   // GenererEnteteNEC : fonction d'action
-{
+void GenererEnteteNEC(int Broche) {                                  // GenererEnteteNEC : fonction d'action
   GenererBurst9000usNEC(Broche);
   delayMicroseconds(4500);                // temps a l'etat bas apres entete du protocole NEC
 }
 
-
-void GenererBurst9000usNEC(int Broche)                              // GenererBurst9000usNEC : fonction d'action
-{
+void GenererBurst9000usNEC(int Broche) {                             // GenererBurst9000usNEC : fonction d'action
   register uint16_t i = 0;
   do {
     GenererImpulsion38kHzNEC(Broche);
   } while (i++ < 342);                    // impulsions du protocole NEC pendant 9000 us
 }
 
-void GenererOctetNEC(int Broche, uint8_t Octet)               // GenererOctetNEC : fonction d'action
-{
+void GenererOctetNEC(int Broche, uint8_t Octet) {              // GenererOctetNEC : fonction d'action
   uint8_t mask = 0x80;                  // masque de 8 bits
   do {                                  // boucle de construction de l'octet NEC
     if (Octet & mask)                   // test du bit
@@ -66,28 +61,24 @@ void GenererOctetNEC(int Broche, uint8_t Octet)               // GenererOctetNEC
   } while (mask != 0);                  // tant que le masque n'est pas nul
 }
 
-void GenererBit0NEC(int Broche)                                     // GenererBit0NEC : fonction d'action
-{
+void GenererBit0NEC(int Broche) {                                    // GenererBit0NEC : fonction d'action
   GenererBurst562usNEC(Broche);
-  delayMicroseconds(562);           // temps a l'etat bas pour un bit 0 du protocole NEC
+  delayMicroseconds(562);           // temps a l'etat bas pour un bit 0 du protocole NEC <-- à modifier en fonction de la valeur à l'oscilloscope
 }
 
-void GenererBit1NEC(int Broche)                                     // GenererBit1NEC : fonction d'action
-{
+void GenererBit1NEC(int Broche) {                                    // GenererBit1NEC : fonction d'action
   GenererBurst562usNEC(Broche);
-  delayMicroseconds(1687);          // temps a l'etat bas pour un bit 1 du protocole NEC
+  delayMicroseconds(1687);          // temps a l'etat bas pour un bit 1 du protocole NEC <-- à modifier en fonction de la valeur à l'oscilloscope
 }
 
-void GenererBurst562usNEC(int Broche)                               // GenererBurst562usNEC : fonction d'action
-{
+void GenererBurst562usNEC(int Broche) {                              // GenererBurst562usNEC : fonction d'action
   register uint8_t i = 0;
   do {
     GenererImpulsion38kHzNEC(Broche);
   } while (i++ < 22);               // 22 impulsions du protocole NEC
 }
 
-void GenererImpulsion38kHzNEC(int Broche)                           // GenererImpulsion38kHzNEC : fonction d'action
-{
+void GenererImpulsion38kHzNEC(int Broche) {                          // GenererImpulsion38kHzNEC : fonction d'action
   register uint8_t i = 0;
   // on allume la diode infrarouge
   AllumerDiodeInfrarouge(Broche);
@@ -114,32 +105,32 @@ void GenererImpulsion38kHzNEC(int Broche)                           // GenererIm
   );                          // temps total = (70 itérations * 4 clk cycles)/(16 * 10^6 Hz) = 17.5 us
 }
 
-inline void AllumerDiodeInfrarouge(int Broche)                             // AllumerDiodeInfrarouge : fonction d'action
-{
+inline void AllumerDiodeInfrarouge(int Broche) {                            // AllumerDiodeInfrarouge : fonction d'action
   if (Broche >= 0 && Broche <= 7) {
     PORTD |= (1 << Broche);
-  } else if (Broche >= 8 && Broche <= 13) {
+  } 
+  if (Broche >= 8 && Broche <= 13) {
     PORTB |= (1 << (Broche - 8));
-  } else if (Broche >= A0 && Broche <= A5) {
+  } 
+  if (Broche >= A0 && Broche <= A5) {
     PORTC |= (1 << (Broche - A0));
   }
 }
 
-inline void EteindreDiodeInfrarouge(int Broche)                            // EteindreDiodeInfrarouge : fonction d'action
-{
+inline void EteindreDiodeInfrarouge(int Broche) {                           // EteindreDiodeInfrarouge : fonction d'action
   if (Broche >= 0 && Broche <= 7) {
     PORTD &= ~(1 << Broche);  
-  } else if (Broche >= 8 && Broche <= 13) {
+  } 
+  if (Broche >= 8 && Broche <= 13) {
     PORTB &= ~(1 << (Broche - 8));
-  } else if (Broche >= A0 && Broche <= A5) {
+  } 
+  if (Broche >= A0 && Broche <= A5) {
     PORTC &= ~(1 << (Broche - A0));
   }
 }
 
-
-// definition des fonctions de reception de la bibliotheque NEC
-int8_t AcquerirTrameNEC(int Broche, uint8_t* ptr_Adresse, uint8_t* ptr_Donnee) // AcquerirTrameNEC : fonction d'acquisition
-{
+// Définition des fonctions de reception de la bibliotheque NEC
+int8_t AcquerirTrameNEC(int Broche, uint8_t* ptr_Adresse, uint8_t* ptr_Donnee) {// AcquerirTrameNEC : fonction d'acquisition
   int8_t entete;
   int16_t adresse, adresse_barre, donnee, donnee_barre;
   int32_t temps;
@@ -161,8 +152,7 @@ int8_t AcquerirTrameNEC(int Broche, uint8_t* ptr_Adresse, uint8_t* ptr_Donnee) /
   return 0;                                                                    // Trame correcte
 }
 
-int8_t AcquerirEnteteNEC(int Broche)                                   // AcquerirEnteteNEC : fonction d'acquisition
-{
+int8_t AcquerirEnteteNEC(int Broche) {                                  // AcquerirEnteteNEC : fonction d'acquisition
   int32_t temps;
   if ((temps = AcquerirFrontMontantNEC(Broche)) < 0)    // Acquisition du front montant
     return temps;                                       // Erreur de timing
@@ -176,8 +166,7 @@ int8_t AcquerirEnteteNEC(int Broche)                                   // Acquer
   return 0;                                             // Entête correcte
 }
 
-int16_t AcquerirOctetNEC(int Broche)                                    // AcquerirOctetNEC : fonction d'acquisition
-{
+int16_t AcquerirOctetNEC(int Broche) {                                   // AcquerirOctetNEC : fonction d'acquisition
   int16_t octet = 0;
   for (int8_t i = 7; i >= 0; i--) {                     // boucle de construction de l'octet NEC
     int8_t bit = AcquerirBitNEC(Broche);                // Acquisition bit NEC
@@ -188,8 +177,7 @@ int16_t AcquerirOctetNEC(int Broche)                                    // Acque
   return octet;
 }
 
-int8_t AcquerirBitNEC(int Broche)                                       // AcquerirBitNEC : fonction d'acquisition
-{
+int8_t AcquerirBitNEC(int Broche) {                                      // AcquerirBitNEC : fonction d'acquisition
   int32_t Temps = AcquerirFrontDescendantNEC(Broche);   // Acquisition du front descendant
   if (Temps < 281 || Temps > 843)                       // Controle de timing
     return (Temps < 0) ? Temps : -1;                    // Erreur de timing
@@ -202,8 +190,7 @@ int8_t AcquerirBitNEC(int Broche)                                       // Acque
   return -1;                                            // Sinon erreur de timing
 }
 
-int32_t AcquerirFrontMontantNEC(int Broche)                              // AcquerirFrontMontantNEC : fonction d'acquisition
-{
+int32_t AcquerirFrontMontantNEC(int Broche) {                             // AcquerirFrontMontantNEC : fonction d'acquisition
   uint32_t TempsFrontPrecedent = micros();              // Mesure du temps de front montant
   while (micros() - TempsFrontPrecedent < 500000)       // Attente du front montant
   {
@@ -216,23 +203,22 @@ int32_t AcquerirFrontMontantNEC(int Broche)                              // Acqu
   return -2;                                            // Trame absente
 }
 
-
-int32_t AcquerirFrontDescendantNEC(int Broche)                           // AcquerirFrontDescendantNEC : fonction d'acquisition
-{
+int32_t AcquerirFrontDescendantNEC(int Broche) {                          // AcquerirFrontDescendantNEC : fonction d'acquisition
   uint32_t Temps = micros();
   while (AcquerirInfrarouge(Broche) && (micros() - Temps < 500000));
   int32_t DeltaTemps = micros() - Temps;
   return DeltaTemps < 200 ? -1 : DeltaTemps;
 }
 
-uint8_t AcquerirInfrarouge(int Broche)
-{
+uint8_t AcquerirInfrarouge(int Broche) {
   uint8_t val = 0;
   if (Broche >= 0 && Broche <= 7) {
     val = PIND & (1 << Broche) ? 0 : 1;
-  } else if (Broche >= 8 && Broche <= 13) {
+  } 
+  if (Broche >= 8 && Broche <= 13) {
     val = PINB & (1 << (Broche - 8)) ? 0 : 1;
-  } else if (Broche >= A0 && Broche <= A5) {
+  } 
+  if (Broche >= A0 && Broche <= A5) {
     val = PINC & (1 << (Broche - A0)) ? 0 : 1;
   }
   return val;
