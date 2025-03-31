@@ -1,8 +1,8 @@
 /*************************************************************************************************************************************/
 // Sujet :   Definition de la bibliotheque de fonctions NEC                                                                          //
-// Auteur :  AUGEREAU F.                                                                                                             //
+// Auteurs :  AUGEREAU F. JOBARD L.                                                                                                  //
 // Date :    14/03/2025                                                                                                              //
-// Version : 1.5.0                                                                                                                   //
+// Version : 1.5.3                                                                                                                   //
 /*************************************************************************************************************************************/
 //                                                                                                                                   //
 // 2 fonctions sont fournies dans cette bibliotheque NEC :                                                                           //
@@ -22,26 +22,19 @@
 //                                                                                                                                   //
 /*************************************************************************************************************************************/
 
-
 // inclusion des fichiers header des bibliothèques de fonctions Arduino
 #include <stdint.h>
+#include <stdbool.h>
 #include <arduino.h>
 
 // declaration des fonctions de la bibliotheque NEC
+void asmDelay(uint32_t cycles);                                                   // sous-fonction d'une trame NEC utilisee par la fonction GenererTrameNEC & AcquerirTrameNEC
 void GenererTrameNEC(int Broche, uint8_t Adresse, uint8_t Donnee);                // fonction d'émission d'une trame NEC
-void GenererEnteteNEC(int Broche);                                                // sous-fonction d'émission d'une trame NEC utilisee par la fonction GenererTrameNEC
-void GenererBurst9000usNEC(int Broche);                                           // sous-fonction d'émission d'une trame NEC utilisee par la fonction GenererTrameNEC
-void GenererOctetNEC(int Broche, uint8_t Octet);                                  // sous-fonction d'émission d'une trame NEC utilisee par la fonction GenererTrameNEC
-void GenererBit0NEC(int Broche);                                                  // sous-fonction d'émission d'une trame NEC utilisee par la fonction GenererTrameNEC
-void GenererBit1NEC(int Broche);                                                  // sous-fonction d'émission d'une trame NEC utilisee par la fonction GenererTrameNEC
-void GenererBurst562usNEC(int Broche);                                            // sous-fonction d'émission d'une trame NEC utilisee par la fonction GenererTrameNEC
+void GenererBurstNEC(int Broche, uint16_t pulses);                                // sous-fonction d'émission d'une trame NEC utilisee par la fonction GenererTrameNEC
 void GenererImpulsion38kHzNEC(int Broche);                                        // sous-fonction d'émission d'une trame NEC utilisee par la fonction GenererTrameNEC
-void AllumerDiodeInfrarouge(int Broche);                                          // sous-fonction d'émission d'une trame NEC utilisee par la fonction GenererTrameNEC
-void EteindreDiodeInfrarouge(int Broche);                                         // sous-fonction d'émission d'une trame NEC utilisee par la fonction GenererTrameNEC
+void controlerDiodeIR(int Broche, bool state);                                    // sous-fonction d'émission d'une trame NEC utilisee par la fonction GenererTrameNEC
 int8_t AcquerirTrameNEC(int Broche, uint8_t* Adresse, uint8_t* Donnee);           // fonction d'acquisition d'une trame NEC
 int8_t AcquerirEnteteNEC(int Broche);                                             // sous-fonction d'acquisition d'une trame NEC utilisee par la fonction AcquerirTrameNEC
 int16_t AcquerirOctetNEC(int Broche);                                             // sous-fonction d'acquisition d'une trame NEC utilisee par la fonction AcquerirTrameNEC
-int8_t AcquerirBitNEC(int Broche);                                                // sous-fonction d'acquisition d'une trame NEC utilisee par la fonction AcquerirTrameNEC
-int32_t AcquerirFrontMontantNEC(int Broche);                                      // sous-fonction d'acquisition d'une trame NEC utilisee par la fonction AcquerirTrameNEC
-int32_t AcquerirFrontDescendantNEC(int Broche);                                   // sous-fonction d'acquisition d'une trame NEC utilisee par la fonction AcquerirTrameNEC
-uint8_t AcquerirInfrarouge(int Broche);                                           // sous-fonction d'acquisition d'une trame NEC utilisee par la fonction AcquerirTrameNEC
+int32_t AcquerirFrontNEC(int Broche, bool front);                                 // sous-fonction d'acquisition d'une trame NEC utilisee par la fonction AcquerirTrameNEC
+bool AcquerirInfrarouge(int Broche);                                              // sous-fonction d'acquisition d'une trame NEC utilisee par la fonction AcquerirTrameNEC
